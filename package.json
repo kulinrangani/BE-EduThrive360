@@ -1,0 +1,25 @@
+{
+  "name": "eduthrive360-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "seed": "node src/scripts/seed.js",
+    "seed:demo": "node src/scripts/seed-demo-quiz-user.js",
+    "seed:quiz-org": "node src/scripts/seed-quiz-for-org.js",
+    "backfill-org-codes": "node src/scripts/backfill-org-codes.js",
+    "test": "node --test src/scoring-engine/scoring-engine.test.js src/services/quote.service.test.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.14.1"
+  }
+}
