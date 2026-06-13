@@ -153,7 +153,7 @@ export async function getGroupWiseAnalytics(requester, query = {}) {
 export async function getHighRiskUsers(requester, query = {}) {
   const organizationId = resolveOrgScope(requester, query.organizationId);
   const match = buildMatch(organizationId);
-  const limit = Math.min(Number(query.limit) || 25, 50);
+  const limit = Math.min(Number(query.limit) || 25, 100);
 
   const latestPerUser = await Result.aggregate([
     { $match: { ...match, riskLevel: { $in: ["High", "Medium"] } } },
