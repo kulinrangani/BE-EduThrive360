@@ -220,8 +220,14 @@ export async function deleteOrganization(id, requester) {
   }
   org.isDeleted = true;
   await org.save();
+
+  // Also soft-delete all quizzes under this organization
+  const { Quiz } = await import("../models/Quiz.js");
+  await Quiz.updateMany({ organizationId: org._id }, { $set: { isDeleted: true } });
+
   return { deleted: true };
 }
+
 
 export async function listOrganizations(requester, query = {}) {
   if (requester.role !== "super_admin") {
