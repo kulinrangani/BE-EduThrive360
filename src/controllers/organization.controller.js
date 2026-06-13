@@ -133,3 +133,16 @@ export async function deleteMember(req, res, next) {
     next(err);
   }
 }
+
+export async function deleteOrg(req, res, next) {
+  try {
+    const result = await orgService.deleteOrganization(req.params.id, req.user);
+    res.json(result);
+  } catch (err) {
+    if (err instanceof AppError) {
+      return sendError(res, err.statusCode, err.message, err.details);
+    }
+    next(err);
+  }
+}
+

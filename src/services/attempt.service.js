@@ -53,9 +53,10 @@ export async function listPublishedQuizzes(requester) {
   if (!orgId) throw new AppError(400, "No organization linked to this account");
 
   const org = await Organization.findById(orgId);
-  if (!org || org.status === "archived") {
+  if (!org || org.isDeleted || org.status === false) {
     throw new AppError(403, "Organization is not available");
   }
+
 
   const quizzes = await Quiz.find({
     organizationId: orgId,

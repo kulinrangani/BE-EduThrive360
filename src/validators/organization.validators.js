@@ -22,8 +22,9 @@ export const updateOrganizationValidator = [
   body("name").optional().trim().notEmpty(),
   body("type").optional().isIn(["school", "corporate"]),
   body("settings").optional().isObject(),
-  body("status").optional().isIn(["active", "archived"]),
+  body("status").optional().isBoolean(),
 ];
+
 
 export const memberIdValidator = [
   param("id").isMongoId().withMessage("Invalid organization id"),

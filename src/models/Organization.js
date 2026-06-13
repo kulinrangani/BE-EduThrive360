@@ -10,14 +10,18 @@ const organizationSchema = new mongoose.Schema(
       required: true,
     },
     status: {
-      type: String,
-      enum: ["active", "archived"],
-      default: "active",
+      type: Boolean,
+      default: true, // true = active, false = inactive
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
     settings: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
     },
+
   },
   { timestamps: true },
 );

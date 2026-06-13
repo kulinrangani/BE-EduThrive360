@@ -37,8 +37,9 @@ export async function getOverallAnalytics(requester, query = {}) {
     recentAttempts,
   ] = await Promise.all([
     organizationId
-      ? Organization.countDocuments({ _id: organizationId })
-      : Organization.countDocuments({ status: { $ne: "archived" } }),
+      ? Organization.countDocuments({ _id: organizationId, isDeleted: { $ne: true } })
+      : Organization.countDocuments({ isDeleted: { $ne: true }, status: true }),
+
     User.countDocuments({
       ...match,
       role: "user",

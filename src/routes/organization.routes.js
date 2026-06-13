@@ -88,4 +88,14 @@ router.post(
   orgController.addMember,
 );
 
+router.delete(
+  "/:id",
+  requireRoles("super_admin"),
+  organizationIdValidator,
+  validate,
+  orgController.deleteOrg,
+);
+
 export default router;
+
+

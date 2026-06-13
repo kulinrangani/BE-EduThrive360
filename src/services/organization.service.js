@@ -39,11 +39,11 @@ export async function findOrganizationByCode(codeInput) {
   if (!code) {
     throw new AppError(400, "Organization code is required");
   }
-  const org = await Organization.findOne({ code });
+  const org = await Organization.findOne({ code, isDeleted: { $ne: true } });
   if (!org) {
     throw new AppError(404, "Invalid organization code");
   }
-  if (org.status === "archived") {
+  if (org.status === false) {
     throw new AppError(403, "This organization is no longer active");
   }
   return org;
@@ -51,12 +51,13 @@ export async function findOrganizationByCode(codeInput) {
 
 export async function assertOrgNotArchived(orgId) {
   const org = await Organization.findById(orgId);
-  if (!org) throw new AppError(404, "Organization not found");
-  if (org.status === "archived") {
-    throw new AppError(403, "Organization is archived");
+  if (!org || org.isDeleted) throw new AppError(404, "Organization not found");
+  if (org.status === false) {
+    throw new AppError(403, "Organization is inactive");
   }
   return org;
 }
+
 
 export async function createOrganization(payload) {
   const { name, type, settings, admin } = payload;
@@ -109,7 +110,7 @@ export async function getMyOrganization(requester) {
   }
 
   let org = await Organization.findById(orgId);
-  if (!org) {
+  if (!org || org.isDeleted) {
     throw new AppError(404, "Organization not found");
   }
 
@@ -132,9 +133,10 @@ export async function getMyOrganization(requester) {
 
 export async function getOrganizationById(id, requester) {
   let org = await Organization.findById(id);
-  if (!org) {
+  if (!org || org.isDeleted) {
     throw new AppError(404, "Organization not found");
   }
+
 
   org = await ensureOrganizationCode(org);
 
@@ -187,7 +189,7 @@ export async function updateOrganization(id, payload, requester) {
   }
 
   const org = await Organization.findById(id);
-  if (!org) {
+  if (!org || org.isDeleted) {
     throw new AppError(404, "Organization not found");
   }
 
@@ -196,14 +198,29 @@ export async function updateOrganization(id, payload, requester) {
   if (payload.settings !== undefined) {
     org.settings = { ...(org.settings ?? {}), ...payload.settings };
   }
-  if (payload.status !== undefined) org.status = payload.status;
+  if (payload.status !== undefined) {
+    if (typeof payload.status === "string") {
+      org.status = payload.status === "active" || payload.status === "true";
+    } else {
+      org.status = Boolean(payload.status);
+    }
+  }
 
   await org.save();
   return org.toJSON();
 }
 
-export async function archiveOrganization(id, requester) {
-  return updateOrganization(id, { status: "archived" }, requester);
+export async function deleteOrganization(id, requester) {
+  if (requester.role !== "super_admin") {
+    throw new AppError(403, "Insufficient permissions");
+  }
+  const org = await Organization.findById(id);
+  if (!org || org.isDeleted) {
+    throw new AppError(404, "Organization not found");
+  }
+  org.isDeleted = true;
+  await org.save();
+  return { deleted: true };
 }
 
 export async function listOrganizations(requester, query = {}) {
@@ -211,9 +228,15 @@ export async function listOrganizations(requester, query = {}) {
     throw new AppError(403, "Insufficient permissions");
   }
 
-  const filter = {};
+  const filter = { isDeleted: { $ne: true } };
   if (query.type) filter.type = query.type;
-  if (query.status) filter.status = query.status;
+  if (query.status !== undefined) {
+    if (query.status === "active" || query.status === "true" || query.status === true) {
+      filter.status = true;
+    } else if (query.status === "inactive" || query.status === "false" || query.status === false) {
+      filter.status = false;
+    }
+  }
   if (query.search) {
     const re = new RegExp(query.search.trim(), "i");
     filter.$or = [{ name: re }, { code: re }];
@@ -236,6 +259,7 @@ export async function listOrganizations(requester, query = {}) {
   }
   return result;
 }
+
 
 export async function addMember(organizationId, payload, requester) {
   if (!canManageOrg(requester, organizationId)) {

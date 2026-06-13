@@ -28,9 +28,9 @@ function resolveTargetOrgId(requester, organizationId) {
 
 async function assertOrgActive(orgId) {
   const org = await Organization.findById(orgId);
-  if (!org) throw new AppError(404, "Organization not found");
-  if (org.status === "archived") {
-    throw new AppError(403, "Organization is archived");
+  if (!org || org.isDeleted) throw new AppError(404, "Organization not found");
+  if (org.status === false) {
+    throw new AppError(403, "Organization is inactive");
   }
   return org;
 }
@@ -39,7 +39,7 @@ async function getQuizForRequester(quizId, requester) {
   const quiz = await Quiz.findById(quizId)
     .populate("organizationId", "name type")
     .populate("createdBy", "fullName email");
-  if (!quiz) throw new AppError(404, "Quiz not found");
+  if (!quiz || quiz.isDeleted) throw new AppError(404, "Quiz not found");
 
   const orgId = quiz.organizationId?._id?.toString() ?? quiz.organizationId?.toString();
   if (requester.role === "super_admin") return quiz;
@@ -49,13 +49,14 @@ async function getQuizForRequester(quizId, requester) {
   return quiz;
 }
 
+
 async function syncQuizQuestionCount(quizId) {
   const count = await Question.countDocuments({ quizId });
   await Quiz.findByIdAndUpdate(quizId, { "settings.totalQuestions": count });
 }
 
 export async function listQuizzes(requester, query = {}) {
-  const filter = {};
+  const filter = { isDeleted: { $ne: true } };
 
   if (requester.role === "super_admin") {
     if (query.organizationId) filter.organizationId = query.organizationId;
@@ -146,12 +147,11 @@ export async function updateQuiz(quizId, payload, requester) {
 
 export async function deleteQuiz(quizId, requester) {
   const quiz = await getQuizForRequester(quizId, requester);
-  await Question.deleteMany({ quizId: quiz._id });
-  await QuestionGroup.deleteMany({ quizId: quiz._id });
-  await Quote.deleteMany({ quizId: quiz._id });
-  await Quiz.deleteOne({ _id: quiz._id });
+  quiz.isDeleted = true;
+  await quiz.save();
   return { deleted: true };
 }
+
 
 export async function listGroups(quizId, requester) {
   await getQuizForRequester(quizId, requester);

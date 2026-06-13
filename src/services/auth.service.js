@@ -129,11 +129,15 @@ export async function loginUser(email, password) {
   if (user.organizationId) {
     const orgId = user.organizationId?._id ?? user.organizationId;
     const { Organization } = await import("../models/Organization.js");
-    const org = await Organization.findById(orgId).select("status");
-    if (org?.status === "archived") {
-      throw new AppError(403, "Organization is archived");
+    const org = await Organization.findById(orgId).select("status isDeleted");
+    if (!org || org.isDeleted) {
+      throw new AppError(403, "This organization is no longer active");
+    }
+    if (org.status === false) {
+      throw new AppError(403, "Organization is deactivated");
     }
   }
+
 
   user.passwordHash = undefined;
   return buildAuthResponse(user);

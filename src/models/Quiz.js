@@ -15,6 +15,11 @@ const quizSchema = new mongoose.Schema(
       enum: ["draft", "published", "archived"],
       default: "draft",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
     settings: {
       scoringModel: {
         type: String,
