@@ -7,7 +7,7 @@ router.get("/health", (_req, res) => {
   const mongo = getMongoStatus();
   res.json({
     status: "ok",
-    service: "eduthrive360-api",
+    service: "em360-api",
     timestamp: new Date().toISOString(),
     mongo,
   });

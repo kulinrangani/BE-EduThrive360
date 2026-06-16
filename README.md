@@ -1,4 +1,4 @@
-# EduThrive360 Backend
+# EM360 Backend
 
 Node.js + Express + MongoDB API for the dynamic psychological quiz engine.
 

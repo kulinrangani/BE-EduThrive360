@@ -16,10 +16,10 @@ const SALT_ROUNDS = 10;
 const DEMO = {
   orgName: "Demo High School",
   orgCode: "DEMO01",
-  userEmail: "student@demo.eduthrive.io",
+  userEmail: "student@demo.em360.io",
   userPassword: "Student1234!",
   userName: "Demo Student",
-  orgAdminEmail: "orgadmin@demo.eduthrive.io",
+  orgAdminEmail: "orgadmin@demo.em360.io",
   orgAdminPassword: "OrgAdmin1234!",
   quizTitle: "Wellness Check (Demo)",
 };

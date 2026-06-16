@@ -8,7 +8,7 @@ const SALT_ROUNDS = 10;
 async function seed() {
   await connectDB();
 
-  const email = process.env.SEED_SUPER_ADMIN_EMAIL ?? "admin@eduthrive.io";
+  const email = process.env.SEED_SUPER_ADMIN_EMAIL ?? "admin@em360.io";
   const password = process.env.SEED_SUPER_ADMIN_PASSWORD ?? "Admin1234!";
   const fullName = process.env.SEED_SUPER_ADMIN_NAME ?? "Platform Admin";
 

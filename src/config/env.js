@@ -5,7 +5,7 @@ export function getEnv() {
     .filter(Boolean);
 
   return {
-    mongodbUri: process.env.MONGODB_URI ?? "mongodb://localhost:27017/eduthrive360",
+    mongodbUri: process.env.MONGODB_URI ?? "mongodb://localhost:27017/em360",
     jwtSecret: process.env.JWT_SECRET ?? "dev-secret-change-me",
     port: Number.parseInt(process.env.PORT ?? "3000", 10),
     corsOrigins,
