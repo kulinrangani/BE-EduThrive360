@@ -25,7 +25,7 @@ export function scoreQuiz({ quiz, groups, questions, answers }) {
 
   const questionsByGroup = new Map();
   for (const q of questions) {
-    const gid = String(q.groupId?.id ?? q.groupId);
+    const gid = q.groupId?.toString() ?? String(q.groupId);
     if (!questionsByGroup.has(gid)) questionsByGroup.set(gid, []);
     questionsByGroup.get(gid).push(q);
   }

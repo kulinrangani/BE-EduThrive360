@@ -27,6 +27,7 @@ export function scoreGroup(group, questions, answerByQuestionId) {
   if (entries.length === 0) {
     return {
       groupId: group.id ?? group._id?.toString(),
+      groupName: group.name,
       rawScore: 0,
       normalizedScore: 0,
       riskLevel: classifyRiskFromRanges(0, group.riskRanges),
