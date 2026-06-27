@@ -64,7 +64,11 @@ export async function profile(req, res, next) {
 
 export async function updateProfile(req, res, next) {
   try {
-    const user = await authService.updateProfile(req.user._id, req.body);
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.avatarUrl = `/uploads/${req.file.filename}`;
+    }
+    const user = await authService.updateProfile(req.user._id, updateData);
     res.json({ user });
   } catch (err) {
     if (err instanceof AppError) {

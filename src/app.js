@@ -7,7 +7,7 @@ import { getEnv } from "./config/env.js";
 const app = express();
 const { corsOrigins } = getEnv();
 
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(
   cors({
     origin: corsOrigins,
@@ -15,6 +15,7 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 app.use(routes);
 
 app.use((_req, res) => {
