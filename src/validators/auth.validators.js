@@ -42,3 +42,14 @@ export const resetPasswordValidator = [
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters"),
 ];
+
+export const updateProfileValidator = [
+  body("fullName").optional().trim().notEmpty().withMessage("Full name cannot be empty"),
+  body("email").optional().isEmail().withMessage("Valid email is required"),
+  body("phoneNumber").optional().trim(),
+  body("avatarUrl").optional().trim(),
+  body("password")
+    .optional()
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters"),
+];

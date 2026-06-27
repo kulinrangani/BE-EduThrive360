@@ -9,6 +9,7 @@ import resultRoutes from "./result.routes.js";
 import analyticsRoutes from "./analytics.routes.js";
 import usersRoutes from "./users.routes.js";
 import moodRoutes from "./mood.routes.js";
+import searchRoutes from "./search.routes.js";
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use("/results", resultRoutes);
 router.use("/analytics", analyticsRoutes);
 router.use("/users", usersRoutes);
 router.use("/mood", moodRoutes);
+router.use("/search", searchRoutes);
 
 export default router;

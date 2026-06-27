@@ -199,3 +199,38 @@ export async function getProfile(userId) {
 
   return toPublicUser(user);
 }
+
+export async function updateProfile(userId, payload) {
+  const { fullName, email, phoneNumber, avatarUrl, password } = payload;
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(404, "User not found");
+  }
+
+  if (fullName !== undefined) {
+    user.fullName = fullName;
+  }
+  if (email !== undefined) {
+    const existing = await User.findOne({ email: email.toLowerCase(), _id: { $ne: userId } });
+    if (existing) {
+      throw new AppError(409, "Email already in use");
+    }
+    user.email = email.toLowerCase();
+  }
+  if (phoneNumber !== undefined) {
+    user.phoneNumber = phoneNumber;
+  }
+  if (avatarUrl !== undefined) {
+    user.avatarUrl = avatarUrl;
+  }
+  if (password !== undefined) {
+    user.passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  }
+
+  await user.save();
+
+  const populated = await User.findById(userId)
+    .populate("organizationId", ORG_POPULATE)
+    .select("-passwordHash");
+  return toPublicUser(populated);
+}

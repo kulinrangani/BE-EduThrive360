@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     passwordHash: { type: String, required: true, select: false },
+    phoneNumber: { type: String, trim: true },
+    avatarUrl: { type: String, trim: true },
     role: {
       type: String,
       enum: ["super_admin", "org_admin", "org_counselor", "user"],

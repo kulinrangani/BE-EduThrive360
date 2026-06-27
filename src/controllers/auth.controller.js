@@ -61,3 +61,15 @@ export async function profile(req, res, next) {
     next(err);
   }
 }
+
+export async function updateProfile(req, res, next) {
+  try {
+    const user = await authService.updateProfile(req.user._id, req.body);
+    res.json({ user });
+  } catch (err) {
+    if (err instanceof AppError) {
+      return sendError(res, err.statusCode, err.message, err.details);
+    }
+    next(err);
+  }
+}

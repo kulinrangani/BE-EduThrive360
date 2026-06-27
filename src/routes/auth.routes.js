@@ -7,6 +7,7 @@ import {
   loginValidator,
   registerValidator,
   resetPasswordValidator,
+  updateProfileValidator,
 } from "../validators/auth.validators.js";
 import { authRateLimit } from "../middleware/rateLimit.middleware.js";
 
@@ -29,5 +30,6 @@ router.post(
   authController.resetPassword,
 );
 router.get("/profile", authenticate, authController.profile);
+router.put("/profile", authenticate, updateProfileValidator, validate, authController.updateProfile);
 
 export default router;
