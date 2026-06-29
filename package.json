@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/server.js",
-    "start": "node src/server.js",
+    "build": "tsc",
+    "start": "node dist/server.js",
     "seed": "node src/scripts/seed.js",
     "seed:demo": "node src/scripts/seed-demo-quiz-user.js",
     "seed:quiz-org": "node src/scripts/seed-quiz-for-org.js",
