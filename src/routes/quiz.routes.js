@@ -1,4 +1,5 @@
 import { Router } from "express";
+import multer from "multer";
 import * as quizController from "../controllers/quiz.controller.js";
 import { authenticate, requireRoles } from "../middleware/auth.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
@@ -109,6 +110,20 @@ router.delete(
   [...quizIdValidator, ...groupIdValidator, ...questionIdValidator],
   validate,
   quizController.deleteQuestion,
+);
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 },
+});
+
+router.post(
+  "/:id/import-questions",
+  quizRoles,
+  quizIdValidator,
+  validate,
+  upload.single("file"),
+  quizController.importQuestions,
 );
 
 export default router;

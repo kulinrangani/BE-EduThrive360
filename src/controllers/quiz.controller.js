@@ -129,3 +129,12 @@ export const deleteQuote = handle(async (req, res) => {
   const result = await quizService.deleteQuote(req.params.id, req.user);
   res.json(result);
 });
+
+export const importQuestions = handle(async (req, res) => {
+  if (!req.file) {
+    throw new AppError(400, "Please upload a CSV file");
+  }
+  const result = await quizService.importQuestions(req.params.id, req.file.buffer, req.user);
+  res.json(result);
+});
+
